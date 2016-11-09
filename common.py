@@ -13,7 +13,7 @@ comma = lexeme(string(','))
 colon = lexeme(string(':'))
 le =  lexeme(string(os.linesep)) # lineending
 
-ident = lexeme(regex(r'[a-zA-Z_][a-zA-Z0-9_]*'))
+ident = lexeme(regex(r'[a-zA-Z_][a-zA-Z0-9_\.]*'))
 comment = whitespace >> regex("//.*?")
 
 
