@@ -15,19 +15,28 @@ from pprint import *
 from .common import *
 
 class Component(object):
-	"""docstring for Component"""
+	
 	def __init__(self, arg):
 		super(Component, self).__init__()
 		self.name = arg[0]
 		self.type = arg[1]
 		self.props = arg[2]
 
+class Property(object):
+	
+	def __init__(self, arg):
+		super(Property, self).__init__()
+		self.name = arg[0]
+		self.args = arg[1]
+		self.arg = self.args[0] if self.args else None
+		
+
 
 name = ident
 jType = ident
 sep = comma
 arglist = lparen >> sepBy1(ident, sep) << rparen
-myProperty = ident + optional(arglist, [])
+myProperty = (ident + optional(arglist, [])).parsecmap(Property)
 properties = sepBy(myProperty, sep)
 component = joint(lbracket >> name << colon, jType, properties, rbracket).parsecmap(Component)
 line = many(component) << le
@@ -50,7 +59,13 @@ def generateFields(lines):
 	return os.linesep.join(map("private final {0.type} {0.name};".format, components(lines)))
 
 def generateInits(lines):
-	return os.linesep.join(map("{0.name} = new {0.type}();".format, components(lines)))
+	return os.linesep.join(map(generateInit, components(lines)))
+
+def generateInit(component):
+	result = ""
+	result += "{0.name} = new {0.type}();".format(component)
+	result += "".join([os.linesep+'{c.name}.setCaption(translate("{p.arg}"));'.format(c=component, p=p) for p in component.props if p.name=='caption'])
+	return result
 
 def generateLayout(lines):
 	return join([generateHorLayout(x) for x in lines if x],
