@@ -1,5 +1,4 @@
 from .parsec import *
-import os
 
 whitespace = regex(r'[ \t]*')
 lexeme = lambda p: p << whitespace
@@ -11,7 +10,7 @@ lbracket = lexeme(string('['))
 rbracket = lexeme(string(']'))
 comma = lexeme(string(','))
 colon = lexeme(string(':'))
-le =  lexeme(string(os.linesep)) # lineending
+le =  lexeme(regex(r'\n')) # lineending
 
 ident = lexeme(regex(r'[a-zA-Z_][a-zA-Z0-9_\.]*'))
 comment = whitespace >> regex("//.*?")

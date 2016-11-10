@@ -13,6 +13,7 @@ from .parsec import *
 from pprint import *
 
 from .common import *
+import os
 
 class Component(object):
 	
